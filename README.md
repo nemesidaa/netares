@@ -22,8 +22,8 @@ Description of flags:
 | Format        | Default               | Description                             |
 |---------------|-----------------------|-----------------------------------------|
 | `--mask`      | `"./..."`             | Path to mask file                       |
-| `--type`      | `"raw"`               | Type of output                          |
-| `--target`    | `"username"`          | Target name                             |
+| `--type`      | `"watchable"`         | Type of output                          |
+| `--target`    | `""`                  | Target name                             |
 | `--timeout`   | `1000`                | Timeout for HTTP in milliseconds        |
 | `--retries`   | `3`                   | Number of retries                       |
 
