@@ -1,0 +1,13 @@
+{
+    "name": "github",
+    "source": "https://github.com/*",
+    "data": {
+      "username": {
+        "route": "//span[@class='p-nickname vcard-username d-block']/text()"
+      },
+      "repositories_count": {
+        "route": "//a[contains(@class, 'UnderlineNav-item')]/span[@class='Counter']"
+      }
+      
+    }
+  }

@@ -22,7 +22,16 @@ var (
 	masks []string // * found masks.
 )
 
+// usage function to display help
+func usage() {
+	fmt.Println("OSINT search tool - NetAres")
+	fmt.Println("Tool provides to search website data using prepared masks.")
+	fmt.Println("Available flags:")
+	flag.PrintDefaults()
+}
+
 func ParseFlags() {
+	flag.Usage = usage
 	flag.StringVar(&maskFile, "mask", "./...", "path to mask file")
 	flag.StringVar(&outputType, "type", "raw", "type of output")
 	flag.StringVar(&targetName, "target", "username", "target name")
@@ -57,6 +66,13 @@ func searchMasksRecursive(dir string) error {
 }
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			// ! In case of shitty panic from nilptrs or external libs(hate them)
+			fmt.Printf("Fatal error occured: %v\n", r)
+			os.Exit(1)
+		}
+	}()
 	ParseFlags()
 
 	// ? Parsing mask.
@@ -77,9 +93,9 @@ func main() {
 		masks = append(masks, maskFile)
 	}
 
-	parsedMasks := make([]*parser.ParsedMask, len(masks))
+	parsedMasks := make([]*parser.ParsedMask, 0, len(masks))
 	// * Output the found masks.
-	for idx, mask := range masks {
+	for _, mask := range masks {
 		pm := new(parser.ParsedMask)
 
 		// * Unmarshalling the mask.
@@ -92,10 +108,14 @@ func main() {
 			fmt.Printf("Error unmarshalling mask %s: %v\n", mask, err)
 			continue
 		}
-		parsedMasks[idx] = pm
+		parsedMasks = append(parsedMasks, pm)
 	}
 
 	// ? Create the http client.
+	if len(parsedMasks) == 0 {
+		fmt.Println("No mask files were found or parsed correctly")
+		os.Exit(1)
+	}
 	httpclient := httpclient.NewHTTPClient(parsedMasks, parser.NewOutputForm(parser.Watchable), targetName, int(retries), time.Duration(timeout)*time.Millisecond)
 	fmt.Println(httpclient.Do())
 }
