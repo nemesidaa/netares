@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"strings"
 )
 
@@ -72,20 +71,4 @@ func (m *ParsedMask) UnmarshalJSON(raw []byte) error {
 // ? Creates a link for the target system. Format source.*>source.target.
 func (m *ParsedMask) CreateTargetLink() string {
 	return strings.ReplaceAll(m.SourceLink, "*", m.TargetName)
-}
-
-// ? Parses the body and returns the result in enum-typed form.
-func (m *ParsedMask) Work(body io.ReadCloser) *OutputForm {
-
-	pb := NewParsedBody(m.TargetName, m.Fields)
-	if err := pb.Parse(body); err != nil {
-		return nil
-	}
-	m.Fields = pb.Data
-	form := NewOutputForm(Watchable)
-
-	if err := form.Acquire(m); err != nil {
-		return nil
-	}
-	return form
 }

@@ -33,14 +33,14 @@ func usage() {
 func ParseFlags() {
 	flag.Usage = usage
 	flag.StringVar(&maskFile, "mask", "./...", "path to mask file")
-	flag.StringVar(&outputType, "type", "raw", "type of output")
-	flag.StringVar(&targetName, "target", "username", "target name")
+	flag.StringVar(&outputType, "type", "watchable", "type of output")
+	flag.StringVar(&targetName, "target", "", "target name")
 	flag.UintVar(&timeout, "timeout", 1000, "timeout in milliseconds")
 	flag.UintVar(&retries, "retries", 3, "number of retries")
 	flag.Parse()
 
-	if maskFile == "" {
-		fmt.Println("Error: mask file path cannot be empty")
+	if maskFile == "" || targetName == "" {
+		fmt.Println("Error: target cannot be empty")
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -116,6 +116,6 @@ func main() {
 		fmt.Println("No mask files were found or parsed correctly")
 		os.Exit(1)
 	}
-	httpclient := httpclient.NewHTTPClient(parsedMasks, parser.NewOutputForm(parser.Watchable), targetName, int(retries), time.Duration(timeout)*time.Millisecond)
+	httpclient := httpclient.NewHTTPClient(parsedMasks, outputType, targetName, int(retries), time.Duration(timeout)*time.Millisecond)
 	fmt.Println(httpclient.Do())
 }
