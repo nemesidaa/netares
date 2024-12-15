@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+/*
+	Legacy xpath parser coded by nemesidaa@
+	Provides to find needable data from html docs and xpath selectors
+*/
+
 var (
 	rawMap                  = map[string]any{}
 	errInsuficientReqFields = errors.New("insufficient required fields")
